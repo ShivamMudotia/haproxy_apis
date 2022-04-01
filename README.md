@@ -6,13 +6,15 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 
 ## Test if it is up and running
-http://127.0.0.1:8000/docs
-http://127.0.0.1:8000/redoc
+
+## http://127.0.0.1:8000/docs
+
+## http://127.0.0.1:8000/redoc
 
 
 ## Authentication
-## username  -->  shivam
-## password  -->  secret
+### username  -->  shivam
+### password  -->  secret
 
 
 ## Routes
@@ -29,8 +31,8 @@ POST/PATCH /backend/<backend>/<server>/disable
 POST/PATCH /backend/<backend>/<server>/enable
 
 ## Reload haproxy - Add OS specific command in the code
-POST /reload # Reload haproxy
+POST /reload
 ## Check haproxy status - Add OS specific command in the code
-POST /status # Haproxy status
+POST /status
 
 
