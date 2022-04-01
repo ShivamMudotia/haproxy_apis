@@ -17,14 +17,20 @@ http://127.0.0.1:8000/redoc
 
 # Routes
 
-GET /backend # List all backends and servers under them and their status (enabled /disbled)
-GET /backend/<backend>  # List specific backend and servers under it and their status (enabled/disabled)
-GET /backend/<backend>/<server> # specific server under a specific backend whether enabled or disabled
-
+# List all backends and servers under them and their status (enabled /disbled)
+GET /backend 
+# List specific backend and servers under it and their status (enabled/disabled)
+GET /backend/<backend> 
+# Check specific server under a specific backend whether enabled or disabled 
+GET /backend/<backend>/<server> 
+# Disable specific server under a specific backend.
 POST/PATCH /backend/<backend>/<server>/disable
+# Enable specific server under a specific backend.
 POST/PATCH /backend/<backend>/<server>/enable
 
+# Reload haproxy - Add OS specific command in the code
 POST /reload # Reload haproxy
+# Check haproxy status - Add OS specific command in the code
 POST /status # Haproxy status
 
 
