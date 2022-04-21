@@ -36,3 +36,11 @@ POST /reload
 POST /status
 
 
+### This is also a frontend available to call these API's which is available at 
+
+https://github.com/ShivamMudotia/haproxyfe.git
+
+
+
+
+

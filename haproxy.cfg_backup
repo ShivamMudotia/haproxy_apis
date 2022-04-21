@@ -112,7 +112,7 @@ backend backend2
     option httpclose
     option forwardfor
     balance     roundrobin
-#    server app2server1 192.168.10.21:443  check ssl verify none maxconn 60000
+    server app2server1 192.168.10.21:443  check ssl verify none maxconn 60000
     server app2server2 192.168.10.22:443  check ssl verify none maxconn 60000
     server app2server3 192.168.10.23:443  check ssl verify none maxconn 60000
 
