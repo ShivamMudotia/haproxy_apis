@@ -158,7 +158,7 @@ async def list_all_backends(current_user: User = Depends(get_current_active_user
 
     haproxyfile.close()
 
-    return{"All Backends": backends}
+    return{"All_Backends": backends}
 
 
 @router.get("/backends/{backend}", tags=['HAProxy - Fetch configuration'])
@@ -317,9 +317,15 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
 
 @router.post("/reload", tags=['HAProxy - Reload / Check Status'])
 async def reload_haproxy(current_user: User = Depends(get_current_active_user)):
-    pass
+    # Add OS specific code to reload haproxy and accoering send a respoce
+    return {"Success" : True } # Do not return any other value on Success
+    # else
+    # return {"Success" : False } # Do not return any other value on Failure
 
 
 @router.get("/status", tags=['HAProxy - Reload / Check Status'])
 async def status_haproxy(current_user: User = Depends(get_current_active_user)):
-    pass
+    # Add OS specific code to get haproxy status 
+   return {"Success" : True } # Do not return any other value on Success
+   # else
+   # return {"Success" : False } # Do not return any other value on Failure
