@@ -19,8 +19,13 @@ uvicorn app.main:app --reload
 
 
 ## Authentication
+
 ### username  -->  shivam
-### password  -->  secret
+### password  -->  Admin321@Admin@123!
+
+### username  -->  admin
+### password  -->  Admin321@Admin@123!
+
 
 
 ## Routes
