@@ -32,20 +32,20 @@ uvicorn app.main:app --reload
 ## Routes
 
 ### List all backends and servers under them and their status (enabled /disbled)
-GET /backend 
+- GET /backend 
 ### List specific backend and servers under it and their status (enabled/disabled)
-GET /backend/<backend> 
+- GET /backend/<backend> 
 ### Check specific server under a specific backend whether enabled or disabled 
-GET /backend/<backend>/<server> 
+- GET /backend/<backend>/<server> 
 ### Disable specific server under a specific backend.
-POST/PATCH /backend/<backend>/<server>/disable
+- POST/PATCH /backend/<backend>/<server>/disable
 ### Enable specific server under a specific backend.
-POST/PATCH /backend/<backend>/<server>/enable
+- POST/PATCH /backend/<backend>/<server>/enable
 
 ### Reload haproxy - Add OS specific command in the code (app/haproxy/routers/haproxy.py)
-POST /reload
+- POST /reload
 ### Check haproxy status - Add OS specific command in the code (app/haproxy/routers/haproxy.py)
-POST /status
+- POST /status
 
 
 
