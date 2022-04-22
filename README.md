@@ -34,9 +34,9 @@ uvicorn app.main:app --reload
 ### List all backends and servers under them and their status (enabled /disbled)
 - "GET /backend"
 ### List specific backend and servers under it and their status (enabled/disabled)
-- GET /backend/<backend> 
+- "GET /backend/<backend> "
 ### Check specific server under a specific backend whether enabled or disabled 
-- GET /backend/<backend>/<server> 
+- "GET /backend/<backend>/<server> "
 ### Disable specific server under a specific backend.
 - POST/PATCH /backend/<backend>/<server>/disable
 ### Enable specific server under a specific backend.
