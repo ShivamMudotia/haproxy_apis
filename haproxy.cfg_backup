@@ -97,26 +97,26 @@ frontend https-in
 
 # keep backend server names convention as it is. eg: app1server1
 
-backend backend1
+backend app1
     mode http
     option httpclose
     option forwardfor
     balance     roundrobin
-    server app1server1 192.168.10.11:443  check ssl verify none maxconn 60000
+#    server app1server1 192.168.10.11:443  check ssl verify none maxconn 60000
     server app1server2 192.168.10.12:443  check ssl verify none maxconn 60000
     server app1server3 192.168.10.13:443  check ssl verify none maxconn 60000
 
 
-backend backend2
+backend app2
     mode http
     option httpclose
     option forwardfor
     balance     roundrobin
-#    server app2server1 192.168.10.21:443  check ssl verify none maxconn 60000
+    server app2server1 192.168.10.21:443  check ssl verify none maxconn 60000
     server app2server2 192.168.10.22:443  check ssl verify none maxconn 60000
     server app2server3 192.168.10.23:443  check ssl verify none maxconn 60000
 
-backend backend3
+backend app3
     mode http
     option httpclose
     option forwardfor
@@ -126,7 +126,7 @@ backend backend3
     server app3server3 192.168.10.33:443  check ssl verify none maxconn 60000
 
 
-backend backend4
+backend app4
     mode http
     option httpclose
     option forwardfor
@@ -135,7 +135,7 @@ backend backend4
     server app4server2 192.168.10.32:443  check ssl verify none maxconn 60000
     server app4server3 192.168.10.33:443  check ssl verify none maxconn 60000
 
-backend backend5
+backend app5
     mode http
     option httpclose
     option forwardfor
@@ -144,7 +144,7 @@ backend backend5
     server app5server2 192.168.10.32:443  check ssl verify none maxconn 60000
     server app5server3 192.168.10.33:443  check ssl verify none maxconn 60000
 
-backend backend6
+backend app6
     mode http
     option httpclose
     option forwardfor

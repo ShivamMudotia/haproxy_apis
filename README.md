@@ -15,6 +15,11 @@
 
 ## http://127.0.0.1:8000/redoc
 
+## make sure to create a .env file. Here is the sample data and variables currently used.
+
+SECRET_KEY="09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+HAPROXY_BASE_PATH='../haproxy_apis'
+
 
 ## Authentication - Default in-built users - See code comments to manage these.
 
@@ -25,7 +30,7 @@
 ### password  -->  Admin321@Admin@123!
 
 ## Some points to keep in mind
-### replace your haproxy.cfg with sample one in the code
+### replace your haproxy.cfg with sample one in the code. update path in .env if it is supposed to be kep at different path.
 ### while manually editing the file, always add a "#" as the first charater of the backend server line, else API's will break
 
 

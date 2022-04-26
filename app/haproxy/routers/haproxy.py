@@ -12,19 +12,28 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 # to get a string like this run:
 # openssl rand -hex 32
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+#SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 600
 
+# This is usually /etc/haproxy on Linux machines. Update .env file accordingly 
+HAPROXY_BASE_PATH=os.getenv('HAPROXY_BASE_PATH')
 
 # Add a user or update password of existing user
 # open a python command prompt
 # import bcrypt
 # from passlib.context import CryptContext
 # pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-# pwd_context.hash('secret')  # Here 'secret' is the new password that you want top set.
+# pwd_context.hash('secret')  # Here 'secret' is the new password that you want to set.
 # update the new hash in belwo DB to update user's password.
 # same process can be followed while adding new user.
 
@@ -168,7 +177,7 @@ async def just_a_welcome_message(current_user: User = Depends(get_current_active
 async def list_all_backends(current_user: User = Depends(get_current_active_user)):
     backends = []
     backendregex = re.compile(r'^backend')
-    os.chdir('../haproxy_apis')
+    os.chdir(HAPROXY_BASE_PATH)
     haproxyfile = open('./haproxy.cfg', 'r')
 
     for line in haproxyfile.readlines():
@@ -186,7 +195,7 @@ async def fetch_backend_servers_and_status(backend: str, current_user: User = De
 
     backends = []
     backendregex = re.compile(r'^backend')
-    os.chdir('../haproxy_apis')
+    os.chdir(HAPROXY_BASE_PATH)
     haproxyfile = open('./haproxy.cfg', 'r')
 
     for line in haproxyfile.readlines():
@@ -203,7 +212,7 @@ async def fetch_backend_servers_and_status(backend: str, current_user: User = De
     serversregex = re.compile(r'^[#|\s]*server')
     backendregex = re.compile(r'^backend')
     blanklineregex = re.compile(r'^$')
-    os.chdir('../haproxy_apis')
+    os.chdir(HAPROXY_BASE_PATH)
     haproxyfile = open('./haproxy.cfg', 'r')
 
     for line in haproxyfile.readlines():
@@ -239,7 +248,7 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
 
     backends = []
     backendregex = re.compile(r'^backend')
-    os.chdir('../haproxy_apis')
+    os.chdir(HAPROXY_BASE_PATH)
     haproxyfile = open('./haproxy.cfg', 'r')
 
     for line in haproxyfile.readlines():
@@ -256,7 +265,7 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
     serversregex = re.compile(r'^[#|\s]*server')
     backendregex = re.compile(r'^backend')
     blanklineregex = re.compile(r'^$')
-    os.chdir('../haproxy_apis')
+    os.chdir(HAPROXY_BASE_PATH)
     haproxyfile = open('./haproxy.cfg', 'r')
 
     for line in haproxyfile.readlines():
@@ -294,7 +303,7 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
     if desired_state == "Disabled":
         if backend_servers_state[server] == "Disabled":
             return {backend: backend_servers_state}
-        os.chdir('../haproxy_apis')
+        os.chdir(HAPROXY_BASE_PATH)
         os.rename('./haproxy.cfg', './haproxy.cfg_backup')
         with open('./haproxy.cfg_backup') as infile:
             with open('./haproxy.cfg', 'w') as outfile:
@@ -313,7 +322,7 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
     else:
         if backend_servers_state[server] == "Enabled":
             return {backend: backend_servers_state}
-        os.chdir('../haproxy_apis')
+        os.chdir(HAPROXY_BASE_PATH)
         os.rename('./haproxy.cfg', './haproxy.cfg_backup')
         with open('./haproxy.cfg_backup') as infile:
             with open('./haproxy.cfg', 'w') as outfile:
