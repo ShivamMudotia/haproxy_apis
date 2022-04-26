@@ -20,7 +20,8 @@
 SECRET_KEY="09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 HAPROXY_BASE_PATH='../haproxy_apis'
 
-## docker and docker-compose - use this option only when you have haproxy also running in the same container or have configured named pipes to run commands on underlying host from this container. 
+## docker and docker-compose - use this option only when you have haproxy also running in the same container 
+## or if have configured named pipes to run commands on underlying host from this container, and using hostPath mounts to update haproxy.cfg 
 
 ## Authentication - Default in-built users - See code comments to manage these.
 
