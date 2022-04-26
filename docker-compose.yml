@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  haproxy_apis:
+    image: shivammudotia21/haproxy_apis:latest
+    container_name: haproxy_apis
+    ports:
+      - 8000:8000
