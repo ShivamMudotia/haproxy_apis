@@ -303,6 +303,16 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
     if desired_state == "Disabled":
         if backend_servers_state[server] == "Disabled":
             return {backend: backend_servers_state}
+        for key in backend_servers_state:
+            if backend_servers_state[key] == "Disabled":
+                return{"backend": "Only one one backend server can be disabled at a time"}
+        total_enabled=0
+        for key in backend_servers_state:
+            if backend_servers_state[key] == "Enabled":
+                total_enabled+=1
+            print(total_enabled)
+        if total_enabled < 2:
+            return{"backend": "Minimum on backend server should be Enabled"}
         os.chdir(HAPROXY_BASE_PATH)
         os.rename('./haproxy.cfg', './haproxy.cfg_backup')
         with open('./haproxy.cfg_backup') as infile:
