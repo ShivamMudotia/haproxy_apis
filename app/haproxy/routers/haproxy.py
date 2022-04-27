@@ -357,14 +357,19 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
 @router.post("/reload", tags=['HAProxy - Reload / Check Status'])
 async def reload_haproxy(current_user: User = Depends(get_current_active_user)):
     # Add OS specific code to reload haproxy and accoering send a respoce
-    return {"Success" : True } # Do not return any other value on Success
-    # else
-    # return {"Success" : False } # Do not return any other value on Failure
-
+    # status = subprocess.call(["sudo", "systemctl", "reload",  "haproxy"])
+    # if status == 0:
+    #     return {"Success" : True } # Do not return any other value on Success
+    # else:
+    #     return {"Success" : False } # Do not return any other value on Failure
+    return {"Success" : True } 
 
 @router.get("/status", tags=['HAProxy - Reload / Check Status'])
 async def status_haproxy(current_user: User = Depends(get_current_active_user)):
     # Add OS specific code to get haproxy status 
-   return {"Success" : True } # Do not return any other value on Success
-   # else
-   # return {"Success" : False } # Do not return any other value on Failure
+#    status = subprocess.call(["systemctl", "is-active",  "haproxy"])
+#    if status == 0: # 0 means "active": 
+#        return {"Success" : True } # Do not return any other value on Success
+#    else:
+#        return {"Success" : False } # Do not return any other value on Failure
+    return {"Success" : True } 
