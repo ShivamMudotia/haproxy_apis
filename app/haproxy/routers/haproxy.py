@@ -175,17 +175,22 @@ async def just_a_welcome_message(current_user: User = Depends(get_current_active
 
 @router.get("/backends", tags=['HAProxy - Fetch configuration'])
 async def list_all_backends(current_user: User = Depends(get_current_active_user)):
-    backends = []
-    backendregex = re.compile(r'^backend')
-    os.chdir(HAPROXY_BASE_PATH)
-    haproxyfile = open('./haproxy.cfg', 'r')
+    # backends = []
+    # backendregex = re.compile(r'^backend')
+    # os.chdir(HAPROXY_BASE_PATH)
+    # haproxyfile = open('./haproxy.cfg', 'r')
 
-    for line in haproxyfile.readlines():
-        if backendregex.search(line):
-            backend = line.split(" ")[1].rstrip("\n")
-            backends.append(backend)
+    # for line in haproxyfile.readlines():
+    #     if backendregex.search(line):
+    #         backend = line.split(" ")[1].rstrip("\n")
+    #         backends.append(backend)
 
-    haproxyfile.close()
+    # haproxyfile.close()
+
+    # Above code is commented as there is no need to discover and show other backends apart from matrix.
+    # Below line is added to hardcode to send only matrix backend. 
+    
+    backends=["https_prodmatrix"]
 
     return{"All_Backends": backends}
 
