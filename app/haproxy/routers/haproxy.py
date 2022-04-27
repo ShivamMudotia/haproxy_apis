@@ -41,10 +41,10 @@ HAPROXY_BASE_PATH=os.getenv('HAPROXY_BASE_PATH')
 
 
 fake_users_db = {
-    "shivam": {
-        "username": "shivam",
-        "full_name": "Shivam Mudotia",
-        "email": "shivam.mudotia@somecompany.com",
+    "matrixx_usershivam": {
+        "username": "Matrixx",
+        "full_name": "Matrixx Team",
+        "email": "dummy@somecompany.com",
         #"hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "hashed_password": '$2b$12$Y/zVOnVS.XpxPMYrtPkkFONwM7rtRdqZZWpdmZVewaNLkeMjr3vc2',
         # hashed password is --> Admin321@Admin@123!
