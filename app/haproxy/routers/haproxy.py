@@ -8,6 +8,8 @@ from fastapi import APIRouter
 import os
 import re
 
+import subprocess
+
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
