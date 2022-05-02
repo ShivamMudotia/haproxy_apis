@@ -177,6 +177,7 @@ async def just_a_welcome_message(current_user: User = Depends(get_current_active
 
 @router.get("/backends", tags=['HAProxy - Fetch configuration'])
 async def list_all_backends(current_user: User = Depends(get_current_active_user)):
+
     backends = []
     backendregex = re.compile(r'^backend')
     os.chdir(HAPROXY_BASE_PATH)
@@ -188,7 +189,9 @@ async def list_all_backends(current_user: User = Depends(get_current_active_user
             backends.append(backend)
 
     haproxyfile.close()
-
+    
+    if current_user.username == "shivam": ## Limiting backends for user "shivam" to "backend_https_prod" only
+        backends = ["backend_https_prod"]
     return{"All_Backends": backends}
 
 
