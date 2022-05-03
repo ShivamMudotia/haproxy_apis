@@ -1,18 +1,36 @@
+#---------------------------------------------------------------------
+# Example configuration for a possible web application.  See the
+# full configuration options online.
+#
+#   http://haproxy.1wt.eu/download/1.4/doc/configuration.txt
+#
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
 # Global settings
 #---------------------------------------------------------------------
 global
-    maxconn     20000
-   # log         /dev/log local0 info
-     log         127.0.0.1 local2
+    # to have these messages end up in /var/log/haproxy.log you will
+    # need to:
+    #
+    # 1) configure syslog to accept network log events.  This is done
+    #    by adding the '-r' option to the SYSLOGD_OPTIONS in
+            #    /etc/sysconfig/syslog
+    #
+    # 2) configure local2 events to go to the /var/log/haproxy.log
+    #   file. A line like the following can be added to
+    #   /etc/sysconfig/syslog
+    #
+    #    local2.*                       /var/log/haproxy.log
+    #
+    log         127.0.0.1 local2
 
     chroot      /var/lib/haproxy
     pidfile     /var/run/haproxy.pid
+    maxconn     9000
     user        haproxy
     group       haproxy
     daemon
-
-    # turn on stats unix socket
-    stats socket /var/lib/haproxy/stats
 
     ssl-default-bind-options no-sslv3
     ssl-default-bind-ciphers ECDH+AESGCM:ECDH+CHACHA20:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:RSA+AESGCM:RSA+AES:!aNULL:!MD5:!DSS
@@ -20,10 +38,9 @@ global
     ssl-default-server-options no-sslv3
     ssl-default-server-ciphers ECDH+AESGCM:ECDH+CHACHA20:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:RSA+AESGCM:RSA+AES:!aNULL:!MD5:!DSS
 
-    ssl-default-bind-ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA
+    ssl-default-bind-ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA:!3DES
 
-    #tune.ssl.default-dh-param 2048
-    tune.ssl.default-dh-param 1024
+    tune.ssl.default-dh-param 2048
 
     # turn on stats unix socket
     stats socket /var/lib/haproxy/stats
@@ -35,91 +52,24 @@ global
 defaults
     mode                    http
     log                     global
-    log         127.0.0.1 local2
     option                  httplog
-#    option                  dontlognull
-#    option http-server-close
+    option                  dontlognull
+    option http-server-close
     option forwardfor       except 127.0.0.0/8
     option                  redispatch
-    retries                 3
-    timeout http-request    10s
+    retries                 10
+    timeout http-request    2m
     timeout queue           1m
-    timeout connect         10s
-    timeout client          300s
-    timeout server          300s
-    timeout http-keep-alive 10s
-    timeout check           10s
-    maxconn                 20000
+    timeout connect         1m
+    timeout client          5m
+    timeout server          5m
+    timeout http-keep-alive 1m
+    timeout check           2m
+    maxconn                 12000
 
-listen stats
-    bind :9000
-    mode http
-    stats enable
-    stats uri /
-
-frontend internal
-    bind *:80
-    mode http
-    acl host_internal_uatokd hdr(host) -i internal.uatokd.maanaginx.com
-    use_backend backend_http if host_internal_uatokd
-    acl host_redis_commander hdr(host) -i redis-commander-redis.uatapps.maanaginx.com
-    acl host_rabbitmq hdr(host) -i rabbitmq-rabbits.uatapps.maanaginx.com
-    acl host_redisinsight hdr(host) -i redisinsight-redis.uatapps.maanaginx.com
-    acl host_logging-kibana-ops hdr(host) -i kibana-ops.uatapps.maanaginx.com
-    use_backend backend_http if host_redis_commander
-    use_backend backend_http if host_rabbitmq
-    use_backend backend_http if host_redisinsight
-    use_backend backend_http if host_logging-kibana-ops
-    
-
-frontend  atomic-openshift-api
-    bind *:8443
-    mode tcp
-        option tcplog
-    acl tls req.ssl_hello_type 1
-
-    tcp-request inspect-delay 5s
-    tcp-request content accept if { req.ssl_hello_type 1 }
-
-    #reqadd X-Forwarded-Proto:\ https
-    #rspadd Strict-Transport-Security:\ max-age=31536000
-    
-        acl host_console req.ssl_sni -i uatokdconsole.maanaginx.com
-    use_backend console if host_console
-    
-        acl host_console_prod req.ssl_sni -i prodokdconsole.maanaginx.com
-    use_backend console_prod if host_console_prod
-    
-        acl host_console_dr req.ssl_sni -i drokdconsole.maanaginx.com
-    use_backend console_dr if host_console_dr
-    
-        default_backend atomic-openshift-api
-
-#frontend internal
-#    bind *:8090
-#    log /var/log/haproxy/haproxy-internal.log debug
-#    mode http
-#    acl host_internal_uatokd hdr(host) -i -m beg internal.uatokd.maanaginx.com:8090
-
- #   use_backend backend_http  if host_internal_uatokd
-
-frontend http-in
-    bind *:8080
-    mode tcp
-    acl tls req.ssl_hello_type 1
-
-    tcp-request inspect-delay 5s
-    tcp-request content accept if tls
-
-    acl host_matrix req.ssl_sni -i 10.240.37.124
-
-    acl host_internal_uatokd hdr(host) -i internaluatokd.maanaginx.com:80
-    acl host_log_analyzer hdr(host) -i log-analyzer.maanaginx.com
-
-    use_backend backend_http  if host_internal_uatokd
-    use_backend backend_http  if host_log_analyzer
-
-    use_backend uatmatrix if host_matrix
+#---------------------------------------------------------------------
+# main frontend which proxys to the backends
+#---------------------------------------------------------------------
 
 frontend https-in
   bind *:443 ssl crt /etc/haproxy/ssl no-sslv3
@@ -130,107 +80,93 @@ frontend https-in
 
   acl tls req.ssl_hello_type 1
 
-  acl host_magento hdr(host) -i itmagento.maanaginx.com
-  acl host_magento hdr(host) -i hfmagento.maanaginx.com
-  acl host_magento hdr(host) -i uatmagento.maanaginx.com
-  acl https_host_backend hdr(host) -i docker-registry-default.uatapps.maanaginx.com
-  acl https_host_backend_prod hdr(host) -i docker-registry-default.prodapps.maanaginx.com
-  acl https_host_backend_dr hdr(host) -i dr-docker-registry-default.prodapps.maanaginx.com
+  acl host_app1 hdr(host) -i app1.testdomain.in
+  acl host_app2 hdr(host) -i app2.testdomain.in
+  acl host_app3 hdr(host) -i app3.testdomain.in
+  acl host_app4 hdr(host) -i app4.testdomain.in
+  acl host_app5 hdr(host) -i app5.testdomain.in
+  acl host_app6 hdr(host) -i app6.testdomain.in
 
-  
-  acl https_host_matrix hdr(host) -i ppmatrix.maanaginx.com
-  acl https_host_matrix hdr(host) -i ppinternalmatrix.maanaginx.com
-  acl host_uat_crm hdr(host) -i crm.uat.yaqoot.sa
-  acl host_yaqoot  hdr(host) -i uat.yaqoot.sa
-  acl host_yaqoot  hdr(host) -i www.uat.yaqoot.sa
-  acl host_yaqoot  hdr(host) -i uat.yaqoot.sa
-  acl host_yaqoot  hdr(host) -i www.uat.yaqoot.sa
-  acl host_payment hdr(host) -i itpay.yaqoot.sa
-  acl host_payment hdr(host) -i www.itpay.yaqoot.sa
-  acl host_payment hdr(host) -i uatpay.yaqoot.sa
-  acl host_payment hdr(host) -i www.itpay.yaqoot.sa
-  acl host_payment hdr(host) -i hfpay.yaqoot.sa
-  acl host_payment hdr(host) -i www.hfpay.yaqoot.sa
-  acl https_host_backend hdr(host) -i  uatokd.maanaginx.com
-  acl https_host_backend hdr(host) -i  itokd.maanaginx.com
-  acl https_host_backend hdr(host) -i  pay-test-order.maanaginx.com
+  use_backend backend1  if host_app1
+  use_backend backend2  if host_app2
+  use_backend backend3  if host_app3
+  use_backend backend4  if host_app4
+  use_backend backend5  if host_app5
+  use_backend backend6  if host_app6
+  default_backend  backend1
 
-  acl uri_magento_panel path_beg /adminuser
-  use_backend magento_panel if uri_magento_panel
+# keep backend server names convention as it is. eg: app1server1
 
-  use_backend https_uatmatrix if https_host_matrix
-  use_backend uat_crm if host_uat_crm
-  use_backend yaqoot  if host_yaqoot
-  use_backend backend_https if host_payment
-  use_backend magento  if host_magento
-  use_backend backend_https if https_host_backend
-  use_backend backend_https_prod if https_host_backend_prod
-  use_backend backend_https_dr if https_host_backend_dr
-  default_backend backend_https
-
-
-backend atomic-openshift-api
-    balance source
-    mode tcp
-    server      api-master0 10.240.35.226:8443 check
-    server      api-master1 10.240.35.227:8443 check
-    server      api-master2 10.240.35.228:8443 check
-
-backend console
-    mode tcp
-    option ssl-hello-chk
-    balance     source
-    server      master0 10.240.35.226:8443 check
-    server      master1 10.240.35.227:8443 check
-    server      master2 10.240.35.228:8443 check
-
-backend console_dr
-    mode tcp
-    option ssl-hello-chk
-    balance     source
-    server      dr-master0 10.240.45.11:8443 check
-    server      dr-master1 10.240.45.12:8443 check
-    server      dr-master2 10.240.45.13:8443 check
-
-
-backend backend_https
+backend app1
     mode http
     option httpclose
     option forwardfor
     balance     roundrobin
-    server     https-infra1 10.240.35.211:443  check ssl verify none maxconn 60000
-    server     https-infra2 10.240.35.212:443  check ssl verify none maxconn 60000
-    server     https-infra3 10.240.35.213:443  check ssl verify none maxconn 60000
+    server app1server1 192.168.10.11:443  check ssl verify none maxconn 60000
+    server app1server2 192.168.10.12:443  check ssl verify none maxconn 60000
+    server app1server3 192.168.10.13:443  check ssl verify none maxconn 60000
 
 
-backend backend_https_prod
+backend app2
     mode http
     option httpclose
     option forwardfor
     balance     roundrobin
-#    server     prod-infra1 10.240.37.26:443  check ssl verify none maxconn 60000
-    server     prod-infra2 10.240.37.27:443  check ssl verify none maxconn 60000
-    server     prod-infra3 10.240.37.28:443  check ssl verify none maxconn 60000
+    server app2server1 192.168.10.21:443  check ssl verify none maxconn 60000
+    server app2server2 192.168.10.22:443  check ssl verify none maxconn 60000
+    server app2server3 192.168.10.23:443  check ssl verify none maxconn 60000
 
-
-backend backend_https_dr
+backend app3
     mode http
     option httpclose
     option forwardfor
     balance     roundrobin
-    server     dr-infra1 10.240.45.16:443  check ssl verify none maxconn 60000                
-    server     dr-infra2 10.240.45.17:443  check ssl verify none maxconn 60000                    
-    server     dr-infra3 10.240.45.18:443  check ssl verify none maxconn 60000                
+    server app3server1 192.168.10.31:443  check ssl verify none maxconn 60000
+    server app3server2 192.168.10.32:443  check ssl verify none maxconn 60000
+    server app3server3 192.168.10.33:443  check ssl verify none maxconn 60000
 
-backend magento
-   mode http
-   option httpclose
-   option forwardfor
-   balance    roundrobin
-   server     magento1 10.240.35.218:443 check ssl verify none maxconn 60000
 
-backend https_uatmatrix
+backend app4
     mode http
     option httpclose
-    balance roundrobin
-    server https_matrix1 10.183.46.220:8443 check ssl verify none maxconn 60000 
+    option forwardfor
+    balance     roundrobin
+    server app4server1 192.168.10.41:443  check ssl verify none maxconn 60000
+    server app4server2 192.168.10.42:443  check ssl verify none maxconn 60000
+    server app4server3 192.168.10.43:443  check ssl verify none maxconn 60000
+
+backend app5
+    mode http
+    option httpclose
+    option forwardfor
+    balance     roundrobin
+    server app5server1 192.168.10.51:443  check ssl verify none maxconn 60000
+    server app5server2 192.168.10.52:443  check ssl verify none maxconn 60000
+    server app5server3 192.168.10.53:443  check ssl verify none maxconn 60000
+
+backend app6
+    mode http
+    option httpclose
+    option forwardfor
+    balance     roundrobin
+#    server app6server1 192.168.10.61:443  check ssl verify none maxconn 60000
+    server app6server2 192.168.10.62:443  check ssl verify none maxconn 60000
+
+
+backend app7
+    mode http
+    option httpclose
+    option forwardfor
+    balance     roundrobin
+    server app7server1 192.168.10.71:443  check ssl verify none maxconn 60000
+
+
+backend app8
+    mode http
+    option httpclose
+    option forwardfor
+    balance     roundrobin
+    server app8server1 192.168.10.81:443  check ssl verify none maxconn 60000
+
+
+

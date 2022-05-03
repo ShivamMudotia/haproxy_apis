@@ -163,16 +163,17 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/users/me/", response_model=User , tags=['HAProxy - Authentication'])
+# @router.get("/users/me", response_model=User , tags=['HAProxy - Authentication'])
+@router.get("/users/me", tags=['HAProxy - Authentication'])
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
-    return current_user
+    return {"user": current_user.username.capitalize()}
 
 
 # HAProxy API's
 
 @router.get("/", tags=['HAProxy - Fetch configuration'])
 async def just_a_welcome_message(current_user: User = Depends(get_current_active_user)):
-    return {"Hello": "Welcome to HAProxy LB Manager"}
+    return {"Hello": current_user.username.capitalize() +  " ! Welcome to HAProxy LB Manager"}
     #return {"token": token}
 
 @router.get("/backends", tags=['HAProxy - Fetch configuration'])
@@ -191,7 +192,7 @@ async def list_all_backends(current_user: User = Depends(get_current_active_user
     haproxyfile.close()
     
     if current_user.username == "shivam": ## Limiting backends for user "shivam" to "backend_https_prod" only
-        backends = ["backend_https_prod"]
+        backends = ["app1","app2","app6"]
     return{"All_Backends": backends}
 
 
@@ -308,9 +309,13 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
     if desired_state == "Disabled":
         if backend_servers_state[server] == "Disabled":
             return {backend: backend_servers_state}
+        
+        # to make sure that only one backend server can be disabled at a time for any backend
         for key in backend_servers_state:
             if backend_servers_state[key] == "Disabled":
                 return{"backend": "Only one one backend server can be disabled at a time"}
+        
+         # to make sure that atleast one backend server is enabled for any backend
         total_enabled=0
         for key in backend_servers_state:
             if backend_servers_state[key] == "Enabled":
@@ -318,6 +323,7 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
             print(total_enabled)
         if total_enabled < 2:
             return{"backend": "Minimum on backend server should be Enabled"}
+        
         os.chdir(HAPROXY_BASE_PATH)
         os.rename('./haproxy.cfg', './haproxy.cfg_backup')
         with open('./haproxy.cfg_backup') as infile:
@@ -362,19 +368,25 @@ async def update_backend(backend: str, server: str, desired_state: str, current_
 @router.post("/reload", tags=['HAProxy - Reload / Check Status'])
 async def reload_haproxy(current_user: User = Depends(get_current_active_user)):
     # Add OS specific code to reload haproxy and accoering send a respoce
+    # Below comented code is for Linux OS
+
     # status = subprocess.call(["sudo", "systemctl", "reload",  "haproxy"])
     # if status == 0:
     #     return {"Success" : True } # Do not return any other value on Success
     # else:
     #     return {"Success" : False } # Do not return any other value on Failure
-    return {"Success" : True } 
+    
+    return {"Success" : True } # comment this line when uncommenting above lines
 
 @router.get("/status", tags=['HAProxy - Reload / Check Status'])
 async def status_haproxy(current_user: User = Depends(get_current_active_user)):
     # Add OS specific code to get haproxy status 
+    # Below comented code is for Linux OS
+
 #    status = subprocess.call(["systemctl", "is-active",  "haproxy"])
 #    if status == 0: # 0 means "active": 
 #        return {"Success" : True } # Do not return any other value on Success
 #    else:
 #        return {"Success" : False } # Do not return any other value on Failure
-    return {"Success" : True } 
+    
+    return {"Success" : True }  # comment this line when uncommenting above lines
