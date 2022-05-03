@@ -191,7 +191,7 @@ async def list_all_backends(current_user: User = Depends(get_current_active_user
 
     haproxyfile.close()
     
-    if current_user.username == "shivam": ## Limiting backends for user "shivam" to "backend_https_prod" only
+    if current_user.username == "shivam": ## Limiting backends for user "shivam" to selected below backends only
         backends = ["app1","app2","app6"]
     return{"All_Backends": backends}
 
